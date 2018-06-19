@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>PakotBlog - Home</title>
+</head>
+<body>
+	<h1>Welcome to the Pakot Blog</h1>
+	<p>Blog, well, for things...</p>
+
+	<main>
+		<article th:each="p : ${posts}">
+			<h2 th:text="${p.title}">Post Title</h2>
+
+			<div>
+				<i>Posted on </i>
+				<span th:text="${p.date}">Date</span>
+				<i> by </i>
+				<span th:text="${p.author.username}">Pavlo Kotelnytskyi</span>
+			</div>
+
+			<p th:utext="${p.body}">Post Body</p>
+		</article>
+	</main>
+</body>
+</html>
