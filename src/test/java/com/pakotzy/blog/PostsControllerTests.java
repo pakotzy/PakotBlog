@@ -1,5 +1,6 @@
 package com.pakotzy.blog;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pakotzy.blog.models.Post;
 import com.pakotzy.blog.models.User;
 import com.pakotzy.blog.services.PostService;
@@ -29,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PostsControllerTests {
 	@Autowired
 	private MockMvc mvc;
+	@Autowired
+	private ObjectMapper mapper;
 
 	@MockBean
 	private PostService postService;
@@ -41,10 +44,12 @@ public class PostsControllerTests {
 		user = new User("pakotzy", "password");
 		Post firstPost = new Post(1L, "First post", "First post body", user, LocalDateTime.now());
 		Post secondPost = new Post(2L, "Second post", "Second post body", user, LocalDateTime.now());
-		posts = Arrays.asList(firstPost, secondPost);
+		Post thirdPost = new Post(3L, "Third post", "Third post body", user, LocalDateTime.now());
+		posts = Arrays.asList(firstPost, secondPost, thirdPost);
 
 		Mockito.when(postService.findAll()).thenReturn(posts);
 		Mockito.when(postService.findById(1L)).thenReturn(secondPost);
+		Mockito.when(postService.create(thirdPost)).thenReturn(2L);
 	}
 
 	@Test
@@ -52,15 +57,25 @@ public class PostsControllerTests {
 		mvc.perform(get("/api/posts")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$", hasSize(3)))
 				.andExpect(jsonPath("$[0].author.username", is(user.getUsername())));
 	}
 
 	@Test
 	public void whenGetPosts_withPostId_returnJsonObject() throws Exception {
 		mvc.perform(get("/api/posts/1")
-				.contentType(MediaType.APPLICATION_JSON))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("body", is(posts.get(1).getBody())));
 	}
+
+//	@Test
+//	public void whenPostPosts_return201andLocationHeader() throws Exception {
+//		mvc.perform(post("/api/posts")
+//			.contentType(MediaType.APPLICATION_JSON)
+//			.characterEncoding("UTF-8")
+//			.content(mapper.writeValueAsString(posts.get(2))))
+//			.andExpect(status().isCreated())
+//			.andExpect(header().string("Location", is("/api/posts/" + (posts.size()-1))));
+//	}
 }
