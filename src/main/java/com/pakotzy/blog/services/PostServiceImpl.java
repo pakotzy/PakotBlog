@@ -21,7 +21,7 @@ public class PostServiceImpl implements PostService {
 		User user = new User("pakotzy", "password");
 
 		posts.add(new Post(1L, "First post", "Body of the first post", user, LocalDateTime.now()));
-		posts.add(new Post(1L, "Second post", "Body of the second post", user, LocalDateTime.now()));
+		posts.add(new Post(2L, "Second post", "Body of the second post", user, LocalDateTime.now()));
 	}
 
 	@Autowired
@@ -39,12 +39,13 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public Post findById(Long id) {
-		return null;
+		return posts.get(id.intValue());
 	}
 
 	@Override
-	public Post create(Post post) {
-		return null;
+	public Long create(Post post) {
+		posts.add(post);
+		return posts.size()-1L;
 	}
 
 	@Override

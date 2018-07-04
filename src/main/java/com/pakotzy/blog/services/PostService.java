@@ -8,7 +8,7 @@ public interface PostService {
 	List<Post> findAll();
 	List<Post> findLatest5();
 	Post findById(Long id);
-	Post create(Post post);
+	Long create(Post post);
 	Post edit(Post post);
 	Post delteById(Long id);
 }
