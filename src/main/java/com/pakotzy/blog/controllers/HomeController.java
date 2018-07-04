@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/")
 public class HomeController {
 	@Autowired
 	PostService postService;
@@ -16,7 +17,7 @@ public class HomeController {
 		return "redirect:/home";
 	}
 
-	@RequestMapping("home")
+	@RequestMapping("/home")
 	public String home(Model model) {
 		model.addAttribute("posts", postService.findAll());
 
