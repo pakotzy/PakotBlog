@@ -1,6 +1,7 @@
 package com.pakotzy.blog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pakotzy.blog.exceptions.ResourceNotFoundException;
 import com.pakotzy.blog.models.Post;
 import com.pakotzy.blog.models.User;
 import com.pakotzy.blog.services.PostService;
@@ -50,7 +51,8 @@ public class PostsControllerTests {
 
 		Mockito.when(postService.findAll()).thenReturn(posts);
 
-		Mockito.when(postService.findById(1L)).thenReturn(secondPost);
+		Mockito.when(postService.findById(2L)).thenReturn(secondPost);
+		Mockito.when(postService.findById(4L)).thenThrow(new ResourceNotFoundException("Post not found"));
 
 		Mockito.when(postService.create(notNull())).thenReturn(posts.get(posts.size()-1).getId());
 	}
@@ -65,11 +67,17 @@ public class PostsControllerTests {
 	}
 
 	@Test
-	public void whenGetPosts_withPostId_returnJsonObject() throws Exception {
-		mvc.perform(get("/api/posts/1")
+	public void whenGetPosts_withValidPostId_returnJsonObject() throws Exception {
+		mvc.perform(get("/api/posts/2")
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("body", is(posts.get(1).getBody())));
+	}
+
+	@Test
+	public void whenGetPosts_withOutOfBoundsPostId_return400() throws Exception {
+		mvc.perform(get("/api/posts/4"))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
