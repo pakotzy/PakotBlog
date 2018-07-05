@@ -21,9 +21,10 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
@@ -48,8 +49,10 @@ public class PostsControllerTests {
 		posts = Arrays.asList(firstPost, secondPost, thirdPost);
 
 		Mockito.when(postService.findAll()).thenReturn(posts);
+
 		Mockito.when(postService.findById(1L)).thenReturn(secondPost);
-		Mockito.when(postService.create(thirdPost)).thenReturn(2L);
+
+		Mockito.when(postService.create(notNull())).thenReturn(posts.get(posts.size()-1).getId());
 	}
 
 	@Test
@@ -69,13 +72,13 @@ public class PostsControllerTests {
 			.andExpect(jsonPath("body", is(posts.get(1).getBody())));
 	}
 
-//	@Test
-//	public void whenPostPosts_return201andLocationHeader() throws Exception {
-//		mvc.perform(post("/api/posts")
-//			.contentType(MediaType.APPLICATION_JSON)
-//			.characterEncoding("UTF-8")
-//			.content(mapper.writeValueAsString(posts.get(2))))
-//			.andExpect(status().isCreated())
-//			.andExpect(header().string("Location", is("/api/posts/" + (posts.size()-1))));
-//	}
+	@Test
+	public void whenPostPosts_return201andLocationHeader() throws Exception {
+		mvc.perform(post("/api/posts")
+			.contentType(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(mapper.writeValueAsString(posts.get(2))))
+			.andExpect(status().isCreated())
+			.andExpect(header().string("Location", is("/api/posts/" + (posts.get(posts.size()-1).getId()))));
+	}
 }
