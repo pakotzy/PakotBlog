@@ -57,6 +57,8 @@ public class PostsControllerTests {
 		Mockito.when(postService.create(notNull())).thenReturn(posts.get(posts.size()-1).getId());
 	}
 
+
+//	GET mapping tests
 	@Test
 	public void whenGetPosts_returnJsonArray() throws Exception {
 		mvc.perform(get("/api/posts")
@@ -75,11 +77,18 @@ public class PostsControllerTests {
 	}
 
 	@Test
-	public void whenGetPosts_withOutOfBoundsPostId_return400() throws Exception {
+	public void whenGetPosts_withOutOfBoundsPostId_return204() throws Exception {
 		mvc.perform(get("/api/posts/4"))
 				.andExpect(status().isNotFound());
 	}
 
+	//TODO
+	@Test
+	public void whenGetPosts_withInvalidPostId_return40() throws Exception {
+
+	}
+
+//	POST mapping tests
 	@Test
 	public void whenPostPosts_return201andLocationHeader() throws Exception {
 		mvc.perform(post("/api/posts")
